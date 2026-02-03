@@ -2,8 +2,8 @@
 <html lang="pt">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Queres ser o meu Valentine? 💕</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Queres ser o meu Valentine?</title>
 
   <!-- Confetti -->
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
@@ -12,7 +12,7 @@
     :root {
       --bg1: #ffd6e7;
       --bg2: #ffeef6;
-      --card: #ffffffee;
+      --card: #ffffffcc;
       --yes: #ff3b7a;
       --yesHover: #ff1f68;
     }
@@ -30,53 +30,40 @@
       padding: 16px;
     }
 
-    /* CONFETTI CANVAS */
-    #confettiCanvas {
+    canvas {
       position: fixed;
       inset: 0;
       pointer-events: none;
-      z-index: 9999;
+      z-index: 999;
     }
 
     .card {
       width: min(720px, 92vw);
-      padding: 26px 22px 30px;
+      padding: 26px 22px;
       background: var(--card);
       backdrop-filter: blur(10px);
       border-radius: 22px;
       text-align: center;
       box-shadow: 0 18px 60px rgba(0,0,0,.15);
+      position: relative;
+      z-index: 2;
     }
 
-    /* ---------- IMAGENS ---------- */
-    .art,
-    .fireworks {
+    img.art {
+      width: min(260px, 80vw);
+      border-radius: 18px;
+      margin: 0 auto 10px;
       display: block;
-      margin: 0 auto;
-      height: auto;
-    }
-
-    .art {
-      width: 220px;
-      max-width: 70vw;
-      margin-bottom: 10px;
-    }
-
-    .fireworks {
-      width: 300px;
-      max-width: 80vw;
-      margin-top: 12px;
     }
 
     h1 {
-      font-size: clamp(26px, 4vw, 42px);
-      margin: 12px 0 18px;
+      font-size: clamp(26px, 4vw, 44px);
+      margin: 14px 0 20px;
     }
 
-    /* ---------- BOTÕES ---------- */
     .button-zone {
       position: relative;
-      width: min(520px, 100%);
+      width: min(520px, 92%);
       height: 150px;
       margin: 0 auto;
       touch-action: none;
@@ -86,7 +73,7 @@
       position: absolute;
       top: 50%;
       transform: translateY(-50%);
-      padding: 14px 24px;
+      padding: 16px 24px;
       font-size: 18px;
       font-weight: 800;
       border-radius: 999px;
@@ -102,7 +89,10 @@
       background: var(--yes);
       color: white;
     }
-    #yesBtn:hover { background: var(--yesHover); }
+
+    #yesBtn:hover {
+      background: var(--yesHover);
+    }
 
     #noBtn {
       left: 62%;
@@ -110,55 +100,50 @@
     }
 
     .hint {
-      margin-top: 10px;
       font-size: 13px;
       opacity: .7;
+      margin-top: 10px;
     }
 
-    /* ---------- RESULTADO ---------- */
-    .result {
-      display: none;
-      animation: pop .35s ease;
+    .hidden {
+      display: none !important;
     }
 
     .result h2 {
-      font-size: clamp(30px, 4.5vw, 44px);
-      margin: 8px 0;
+      font-size: clamp(30px, 4.5vw, 46px);
+      margin: 10px 0;
     }
 
-    @keyframes pop {
-      from { transform: scale(.96); opacity: 0; }
-      to { transform: scale(1); opacity: 1; }
+    .result img {
+      width: min(380px, 90vw);
+      border-radius: 18px;
     }
   </style>
 </head>
 
 <body>
-  <canvas id="confettiCanvas"></canvas>
+  <canvas id="confetti"></canvas>
 
   <main class="card">
 
-    <!-- ===== PRIMEIRA PÁGINA ===== -->
+    <!-- PAGE 1 -->
     <section id="question">
-      <!-- 🔁 SUBSTITUI POR UMA IMAGEM TUA -->
-      <img src="animal.png" alt="Animal com coração" class="art">
+      <img class="art" src="dog.jpeg" alt="Cute dog" />
 
-      <h1>Queres ser o meu Valentine? 💖</h1>
+      <h1>Queres ser o meu Valentine? 💕</h1>
 
       <div class="button-zone" id="zone">
-        <button id="yesBtn">Sim 💕</button>
+        <button id="yesBtn">Sim</button>
         <button id="noBtn">Não</button>
       </div>
 
-      <div class="hint" id="hint">O botão “Não” é tímido 😈</div>
+      <div class="hint">O botão “Não” é muito tímido 😈</div>
     </section>
 
-    <!-- ===== SEGUNDA PÁGINA ===== -->
-    <section class="result" id="result">
-      <h2>YAAAAY! 🎉</h2>
-
-      <!-- 🔁 SUBSTITUI POR UMA IMAGEM / GIF TEU -->
-      <img src="celebration.gif" alt="Celebração" class="fireworks">
+    <!-- PAGE 2 -->
+    <section id="result" class="hidden">
+      <h2>YAY! 🎉💖</h2>
+      <img src="bibble.jpeg" alt="Celebration" />
     </section>
 
   </main>
@@ -169,69 +154,59 @@
     const noBtn = document.getElementById("noBtn");
     const question = document.getElementById("question");
     const result = document.getElementById("result");
-    const hint = document.getElementById("hint");
+    const canvas = document.getElementById("confetti");
 
-    /* ---------- CONFETTI ---------- */
-    const canvas = document.getElementById("confettiCanvas");
-    function resizeCanvas() {
-      const dpr = window.devicePixelRatio || 1;
-      canvas.width = innerWidth * dpr;
-      canvas.height = innerHeight * dpr;
-    }
-    resizeCanvas();
-    addEventListener("resize", resizeCanvas);
-
-    const confettiInstance = confetti.create(canvas, { resize: false });
+    /* CONFETTI SETUP */
+    const confettiInstance = confetti.create(canvas, { resize: true, useWorker: true });
 
     function launchConfetti() {
       const end = Date.now() + 1500;
       (function frame() {
         confettiInstance({
-          particleCount: 10,
-          spread: 100,
-          startVelocity: 40,
+          particleCount: 12,
+          spread: 90,
+          startVelocity: 45,
           origin: { x: Math.random(), y: Math.random() * 0.3 }
         });
         if (Date.now() < end) requestAnimationFrame(frame);
       })();
     }
 
-    /* ---------- NO BUTTON FUGITIVO ---------- */
-    function clamp(n, min, max) {
-      return Math.max(min, Math.min(max, n));
+    /* NO BUTTON RUNS */
+    function clamp(v, min, max) {
+      return Math.max(min, Math.min(max, v));
     }
 
     zone.addEventListener("pointermove", e => {
-      const zb = zone.getBoundingClientRect();
-      const nb = noBtn.getBoundingClientRect();
+      const b = noBtn.getBoundingClientRect();
+      const z = zone.getBoundingClientRect();
+      const d = Math.hypot(
+        (b.left + b.width / 2) - e.clientX,
+        (b.top + b.height / 2) - e.clientY
+      );
 
-      const dx = (nb.left + nb.width / 2) - e.clientX;
-      const dy = (nb.top + nb.height / 2) - e.clientY;
-      const dist = Math.hypot(dx, dy);
-
-      if (dist < 140) {
-        let angle = Math.random() * Math.PI * 2;
-        let x = Math.random() * (zb.width - nb.width);
-        let y = Math.random() * (zb.height - nb.height);
-
-        noBtn.style.left = clamp(x, 0, zb.width - nb.width) + "px";
-        noBtn.style.top = clamp(y, 0, zb.height - nb.height) + "px";
-        noBtn.style.transform = "none";
+      if (d < 120) {
+        const x = Math.random() * (z.width - b.width);
+        const y = Math.random() * (z.height - b.height);
+        noBtn.style.left = clamp(x, 0, z.width - b.width) + "px";
+        noBtn.style.top = clamp(y, 0, z.height - b.height) + "px";
+        yesBtn.style.transform = "translateY(-50%) scale(1.15)";
       }
     });
 
     noBtn.addEventListener("click", e => e.preventDefault());
 
-    /* ---------- YES CLICK ---------- */
+    /* YES CLICK */
     yesBtn.addEventListener("click", () => {
-      question.style.display = "none";
-      result.style.display = "block";
-      hint.style.display = "none";
+      question.classList.add("hidden");
+      result.classList.remove("hidden");
       launchConfetti();
     });
   </script>
 </body>
 </html>
+
+
 
 
 
